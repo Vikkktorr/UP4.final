@@ -20,8 +20,8 @@ concurrency:
 
 env:
   # Адрес API задаётся при сборке, в исходном коде его нет.
-  # PocketBase запускается локально: pocketbase/pocketbase.exe serve --http 127.0.0.1:8090
-  API_BASE_URL: http://127.0.0.1:8090
+  # PocketBase размещён на Render (render.yaml, pocketbase/Dockerfile).
+  API_BASE_URL: https://autoservice-pocketbase.onrender.com
 
 jobs:
   build:
