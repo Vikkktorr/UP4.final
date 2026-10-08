@@ -1,0 +1,36 @@
+name: autoservice_web
+description: "Итоговый проект. Автосервис на PocketBase: запись к мастеру, учёт автомобилей, клиентов и услуг."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Маршрутизация через адресную строку
+  go_router: ^17.2.3
+  # Состояние приложения
+  provider: ^6.1.5+1
+  # Разделение разрядов и формат дат
+  intl: ^0.20.2
+  # HTTP-клиент для работы с сервером
+  dio: ^5.11.1
+  # Глубокое сравнение значений формы
+  collection: ^1.19.0
+  # Токены и профиль между перезагрузками страницы (localStorage)
+  shared_preferences: ^2.5.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,73 @@
+# Сборка и публикация на GitHub Pages при каждом изменении ветки main.
+# Перед сборкой — те же проверки, что и локально: анализатор,
+# форматирование, тесты. Если хоть одна не прошла, публикации не будет.
+name: Сборка и публикация
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Одновременно идёт только одна публикация; новая отменяет старую.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  # Адрес API задаётся при сборке, в исходном коде его нет.
+  # PocketBase запускается локально: pocketbase/pocketbase.exe serve --http 127.0.0.1:8090
+  API_BASE_URL: http://127.0.0.1:8090
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.35.3
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Анализатор
+        run: flutter analyze
+
+      - name: Форматирование
+        run: dart format --set-exit-if-changed lib test
+
+      - name: Тесты
+        run: flutter test
+
+      - name: Сборка
+        # Приложение лежит в подкаталоге по имени репозитория.
+        run: >-
+          flutter build web --release
+          --base-href /${{ github.event.repository.name }}/
+          --dart-define=API_BASE_URL=$API_BASE_URL
+
+      - name: 404.html для прямых ссылок
+        # GitHub Pages отдаёт 404.html на неизвестный путь: копия index.html
+        # загружает приложение, и оно само открывает нужный экран.
+        run: cp build/web/index.html build/web/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
