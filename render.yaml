@@ -1,0 +1,19 @@
+# PocketBase в интернете: бесплатный веб-сервис Render из pocketbase/Dockerfile.
+# Пересобирается только при изменениях в папке pocketbase.
+services:
+  - type: web
+    name: autoservice-pocketbase
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./pocketbase/Dockerfile
+    dockerContext: ./pocketbase
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    buildFilter:
+      paths:
+        - pocketbase/**
+    envVars:
+      # Пароль суперпользователя панели /_/ — случайный, виден в настройках Render.
+      - key: PB_SUPERUSER_PASSWORD
+        generateValue: true
